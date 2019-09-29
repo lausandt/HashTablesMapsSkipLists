@@ -1,0 +1,20 @@
+Map ADT
+
+A Map M is a collection of Key Values pairs modeled as entries. Keys need to be unique, keys can map to the same value
+
+size(): Returns the number of entries in M
+
+isEmpty(): Returns a boolean indicating if the is empty or not
+
+get(k): Returns the value v associated with key k if such an entry exists, otherwise returns null
+
+put(k,v): if M does not have an entry wit key equal to k, then adds entry (k,v) to M and returns null. Else
+          replaces the existing value of entry (k,v) with v and returns the old value
+
+remove(K): Removes from M the entry with key equal to k and returns it's value. If M has no such entry returns null
+
+keySet(): Returns an iterable collection containing all keys stored in M
+
+values(): Returns an iterable collection containing all the values of entries stored in M (with possible duplicates)
+
+entrySet(): returns an iterable collection of all key-value entries in M
