@@ -1,0 +1,73 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.ArrayList;
+
+import heaps_priority_queues.Entry;
+
+/**
+ * A hash map with seperate chaining 
+ * The remarks are not only meant for readers other than me, but foremost for me
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists
+ */
+public class ChainHashMap<K, V> extends AbstractHashMap<K,V> {
+	
+	// instance variables
+	
+	// a fixed capacity array of UnsortedTableMap(s) that serves as the buckets
+	private UnsortedTableMap<K,V>[] table; //instantiated in createTable
+	
+	// constructors
+	public ChainHashMap() { super(); }
+	
+	public ChainHashMap(int capacity) { super(capacity); }
+	
+	public ChainHashMap(int capacity, int prime) { super(capacity, prime); }
+	
+	
+
+	/** Returns an iterable collection of all key value entries of the map*/
+	public Iterable<Entry<K, V>> entrySet() {
+		ArrayList<Entry<K,V>> buffer = new ArrayList<>();       // ArrayList is an iterable collection
+		for (int h = 0; h < super.capacity; h++)
+			if (table[h] != null)								// if the table has a bucket
+				for (Entry<K,V> entry : table[h].entrySet())    // for all the entries in that bucket 
+					buffer.add(entry);                          // add them to the bucket
+		return buffer;
+	}
+
+	/** creates an en empty table using the current capacity */
+	@SuppressWarnings("unchecked")
+	protected void createTable() { table = (UnsortedTableMap<K,V>[]) new UnsortedTableMap[super.capacity]; } // the array is instantiated at capacity all values are null
+
+	/** returns the value v associated with key and stored bucket which is stored in table[h], or null */
+	protected V bucketGet(int h, K key) { 
+		UnsortedTableMap<K,V> bucket = table[h];   	// get the bucket associated with the hash key
+		if (bucket == null)	return null;			// if the bucket is empty return null
+		return bucket.get(key);						// return the value 
+	}
+
+	/** Removes an entry having key from bucket with hash value h */
+	protected V bucketRemove(int h, K key) {
+		UnsortedTableMap<K,V> bucket = table[h]; 
+		if (bucket == null) return null;
+		int oldSize = bucket.size();
+		V answer = bucket.remove(key);
+		super.n -= (oldSize - bucket.size());
+		return answer;
+	}
+
+	/** Associates key k with value v in a bucket with hash value h, or else null. */
+	protected V bucketPut(int h, K key, V value) {
+		UnsortedTableMap<K,V> bucket = table[h];			// getting the bucket associated with the hash key
+		if (bucket == null)									// if that bucket is not yet filled with a key-value pair
+			bucket = table[h] = new UnsortedTableMap<>();	// create a new bucket (java can chain)
+		int oldSize = bucket.size();						
+		V answer = bucket.put(key, value);					
+		super.n += (bucket.size()-oldSize);                 // there is only a key-value pair added if it doesn't exist, otherwise the value is replaced and the size does not increase
+		return answer;
+	}
+}
