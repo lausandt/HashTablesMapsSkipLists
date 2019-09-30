@@ -1,0 +1,94 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.ArrayList;
+
+import heaps_priority_queues.Entry;
+
+/**
+ * Hash map using open addressing with linear probing
+ * comments are intended for me as reader 
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists
+ */
+public class ProbeHashMap<K, V> extends AbstractHashMap<K,V> {
+	
+	// instance variables 
+	
+	private MapEntry<K,V>[] table; 									// a fixed size array of entries all initially null
+	private MapEntry<K,V> DEFUNCT = new MapEntry<>(null, null); 	// sentinel 
+	
+	// constructors 
+	
+	public ProbeHashMap() { super(); }
+	
+	public ProbeHashMap(int capacity) { super(capacity); }
+	
+	public ProbeHashMap(int capacity, int prime) { super(capacity, prime); }
+	
+	@SuppressWarnings("unchecked")
+	/** creates an empty table having length current capacity */
+	protected void createTable() { table = (MapEntry<K,V>[]) new MapEntry[super.capacity];}
+
+	// private utility methods 
+	
+	/** Returns true if location is either empty or the defunct sentinal */
+	private boolean isAvailable(int j) { return (table[j] == null || table[j] == DEFUNCT); }
+	
+	/** Searches for an entry with K key in a bucket h  
+	 * Returns index with key k, or -(a+1) such that k could be added at index a 
+	 */ 
+	private int findSlot(int h, K key) {
+		int avail = -1;											// no slot available
+		int j     = h;											// index while scanning the table
+		do {						
+			if (isAvailable(j)) {								// either null or DEFUNCT
+				if (avail == -1 ) avail = j;                    // the first available slot 
+				if (table[j] == null) break; 					// if the bucket (table[j]) is empty there is no key in the bucket
+			} else if (table[j].getKey().equals(key))           
+				return j;										// if there is a succesful match 
+			j = (j+1) % super.capacity;	                        // otherwise keep looking 
+		} while (j != h);
+		return -(avail+1);                                      // search has failed
+	}
+	
+
+	/** Returns an iterable collection of key-value entries in the map */
+	public Iterable<Entry<K, V>> entrySet() {
+		ArrayList<Entry<K,V>> buffer = new ArrayList<>();
+		for (int h=0;h < super.capacity; h++)
+			if(!isAvailable(h)) buffer.add(table[h]);
+		return buffer;
+	}
+
+
+	/** Returns the value associated with key in bucket with hash value h, or null */
+	protected V bucketGet(int h, K key) {
+		int j = findSlot(h, key);
+		if (j<0) return null;         // if j is smaller than zero there is no bucket 
+		return table[j].getValue();
+	}
+
+	/** Removes entry with key in bucket with hash value h if any  */
+	protected V bucketRemove(int h, K key) {
+		int j = findSlot(h, key);
+		if (j <0) return null;            // nothing to remove
+		V answer = table[j].getValue();
+		table[j] = DEFUNCT;               // default setting for deactivated slots
+		super.n--;
+		return answer;
+	}
+
+	/** Associates key k with value v in bucket with hash value h, if any */
+	protected V bucketPut(int h, K key, V value) {
+		int j = findSlot(h, key);
+		if (j >= 0) 									// there is a bucket with key 
+			return table[j].setValue(value);			// change the value return old value
+		table[-(j+1)] = new MapEntry<>(key, value);		// if there wasn't a bucket with this key, then create an entry 
+		super.n++;
+		return null;
+	}
+
+}
