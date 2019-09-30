@@ -1,0 +1,86 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import heaps_priority_queues.Entry;
+
+/**
+ * Abstract hash map class 
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists
+ */
+public abstract class AbstractHashMap<K, V> extends AbstractMap<K,V>{
+	
+	// instance variables
+	protected int n; 			// number of entries 
+	protected int capacity; 	// length of the table
+	private int prime; 			// prime factor
+	private long shift, scale;	// shift and scale factor 
+	
+	// constructors 
+	
+	public AbstractHashMap(int capacity, int prime) {
+		this.prime    = prime;
+		this.capacity = capacity;
+		Random rand = new Random();
+		scale = rand.nextInt(prime-1)+1;
+		shift = rand.nextInt(prime);
+		createTable();
+	}
+	
+	// constructor with given prime 
+	public AbstractHashMap(int capacity) { this(capacity, 109345121 ); }
+	
+	// constructor with given capacity
+	public AbstractHashMap() { this(17);}
+	
+	public int size() { return n; }
+	
+	public V get(K key) { return bucketGet(hashValue(key), key); }
+	
+	public V remove(K key) { return bucketRemove(hashValue(key), key); }
+	
+	public V put(K key, V value) {
+		V answer = bucketPut(hashValue(key), key, value);
+		if (n > capacity / 2)
+			resize(2*capacity - 1); // or find nearest prime 
+		return answer;
+	}
+	
+	// private utility methods
+
+	private void resize(int newCapacity) {
+		ArrayList<Entry<K,V>> buffer = new ArrayList<>(n);
+		for (Entry<K,V> e: entrySet())
+			buffer.add(e);
+		capacity = newCapacity;
+		createTable();						// based upon the updated capacity is implemented by a subclass
+		n = 0;								// will be recomputed as the table is filled
+		for (Entry<K,V> e: buffer)
+			put(e.getKey(), e.getValue());	// here it will equal previous n
+	}
+
+	/**  
+	 * MAD method compression: ((ai+b) mod p) mod N 
+	 * where a = scale, i = key, b = shift, p = prime, N is size bucket array and  
+	 * p > N and scale > 0
+	 * @return a hash int 
+	 */
+	private int hashValue(K key) { 
+		return (int) ((Math.abs(key.hashCode()*scale + shift) % prime) % capacity); 
+		}
+
+	// abstract methods 
+	protected abstract void createTable();
+	
+	protected abstract V bucketGet(int h, K key);
+    
+	protected abstract V bucketRemove(int hashValue, K key);
+	
+	protected abstract V bucketPut(int hashValue, K key, V value);
+
+}
