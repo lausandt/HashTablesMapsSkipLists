@@ -1,0 +1,37 @@
+Sorted Map ADT
+
+Standard map behaviour 
+
+size(): Returns the number of entries in M
+
+isEmpty(): Returns a boolean indicating if the is empty or not
+
+get(k): Returns the value v associated with key k if such an entry exists, otherwise returns null
+
+put(k,v): if M does not have an entry wit key equal to k, then adds entry (k,v) to M and returns null. Else
+          replaces the existing value of entry (k,v) with v and returns the old value
+
+remove(K): Removes from M the entry with key equal to k and returns it's value. If M has no such entry returns null
+
+keySet(): Returns an iterable collection containing all keys stored in M
+
+values(): Returns an iterable collection containing all the values of entries stored in M (with possible duplicates)
+
+entrySet(): returns an iterable collection of all key-value entries in M
+
+Extended behaviour 
+
+firstEntry(): Returns the entry with the smallest key value, or null if the map is empty
+
+lastEntry(): Returns the entry with the largest key value or null if the map is empty
+
+ceilingEntry(k): Return the entry with the least key value bigger than or equal to the given key, null if no such entry exists
+
+floorEntry(k):  Return the entry with the biggest key value smaller than or equal to the given key, null if no such entry exists
+ 
+lowerEntry(k):  Return the entry with the greatest key value strictly smaller than the given key, null if no such entry exists 
+
+higherEntry(k): Return the entry with the least key value strictly greater than the given key, null if no such entry exists 
+
+subMap(k1, k2): Returns an iteration of all entries greater than pr equal to k1, but strictlt less than k2
+
