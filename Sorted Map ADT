@@ -33,5 +33,5 @@ lowerEntry(k):  Return the entry with the greatest key value strictly smaller th
 
 higherEntry(k): Return the entry with the least key value strictly greater than the given key, null if no such entry exists 
 
-subMap(k1, k2): Returns an iteration of all entries greater than pr equal to k1, but strictlt less than k2
+subMap(k1, k2): Returns an iteration of all entries greater than or equal to k1, but strictly less than k2
 
