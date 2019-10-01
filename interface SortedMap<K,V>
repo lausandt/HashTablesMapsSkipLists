@@ -1,0 +1,38 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+
+import heaps_priority_queues.Entry;
+
+/**
+ * Interface for a sorted map 
+ * the method signatures are the same as java.util.Naviagable
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists/
+ */
+public interface SortedMap<K,V> extends Map<K,V> {
+	
+	/** Returns the entry with the smallest key value, or null if the map is empty */
+	Entry<K,V > firstEntry();
+	
+	/** Returns the entry with the largest key value or null if the map is empty */
+	Entry<K,V> lastEntry();
+	
+	/** Return the entry with the least key value bigger than or equal to the given key, null if no such entry exists */
+	Entry<K,V >ceilingEntry(K k); 
+
+	/**  Return the entry with the biggest key value smaller than or equal to the given key, null if no such entry exists */
+	Entry<K,V> floorEntry(K k);  
+	
+	/** Return the entry with the greatest key value strictly smaller than the given key, null if no such entry exists */
+	Entry<K,V> lowerEntry(K k);  
+
+	/** Return the entry with the least key value strictly greater than the given key, null if no such entry exists */
+	Entry<K,V> higherEntry(K k); 
+
+	/** Returns an iteration of all entries greater than or equal to k1, but strictly less than k2 */
+	Iterable<Entry<K,V>> subMap(K k1, K k2); 
+
+}
