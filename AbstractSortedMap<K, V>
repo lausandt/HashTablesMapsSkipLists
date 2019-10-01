@@ -1,0 +1,67 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.Comparator;
+
+import heaps_priority_queues.DefaultComparator;
+
+/**
+ *  An abstract base class to ease the implementation of the SortedMap interface.
+ *  
+ * This is my attempt to recreate the class provided by Goodrich, Tamassia and Goldwasser
+ * I use MapEntry<K,V> which is inherited from AbstractMap (unlike the aforementioned gentlemen)
+ * Reuse the checkKey method
+ * 4 methods to compare keys and entries
+ * 2 constructors, 1 using the previously defined DefaultComparator  
+ * 
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists
+ *
+ */
+public abstract class AbstractSortedMap<K, V> extends AbstractMap<K,V> implements SortedMap<K,V> {
+	
+	// instance variable
+	private Comparator<K> comp;
+	
+
+	// constructors
+	
+	/** constructor with user provided comparator */
+	protected AbstractSortedMap(Comparator<K> c) { comp = c; }
+	
+	/** constructor with a default comparator that uses the natural ordering */
+	protected AbstractSortedMap() { this(new DefaultComparator<K>()); }
+	
+	 /** Method for comparing two entries according to key */
+	protected int entriesCompare(MapEntry<K,V> one, MapEntry<K,V> two) {
+		return comp.compare(one.getKey(), two.getKey());
+	}
+	
+	/** Method for comparing a key to an entry's key*/
+	protected int keyEntryCompare(K key, MapEntry<K,V> entry) {
+		return comp.compare(key, entry.getKey());
+	}
+	
+	/** Method for comparing an entry's to a key */
+	protected int entryKeyCompare(MapEntry<K,V> entry, K key) {
+		return comp.compare(entry.getKey(), key);
+	}
+	
+	/** method for comparing keys */
+	protected int keysCompare(K one, K two) {
+		return comp.compare(one, two);
+	}
+	
+	/** method to check the validity of a key */
+	protected boolean checkKey(K key) throws IllegalArgumentException {
+		try {
+			return (comp.compare(key, key) == 0);
+		} catch (ClassCastException e) {  // if the arguments' types prevent them from being compared by this comparator.
+			throw new IllegalArgumentException("Incompatible key");
+		}
+	}
+	
+
+}
