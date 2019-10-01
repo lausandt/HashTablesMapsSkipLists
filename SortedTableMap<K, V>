@@ -1,0 +1,130 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+
+import heaps_priority_queues.Entry;
+
+/**
+ * Class for a sorted table map 
+ * Primarily useful in situations where there are many searches little updates
+ * Flight database for instance
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipLists
+ */
+public class SortedTableMap<K, V> extends AbstractSortedMap<K,V> {
+	
+	// instance variables
+	private ArrayList<MapEntry<K,V>> table = new ArrayList<>();
+	
+	// constructors 
+	/** constructs an empty sorted table map with a default comparator */
+	public SortedTableMap() { super(); }
+	
+	/** constructs an empty sorted table map with a user defined comparator */
+	public SortedTableMap(Comparator<K> comp) { super(comp); }
+	
+	// private utility
+	
+	/** Returns the smallest index for range table[low..high] inclusive 
+	 * storing (returning) an entry with a key greater than or equal to k (or else index high +1, by convention) 
+	 * binary search */
+	private int findIndex(K key, int low, int high) {
+		if (high < low) return high +1; 						// no entry in the range returns the high before any recursion 
+		int mid = (low + high)/2;
+		int comp = compare(key, table.get(mid)); 				// comparing the given key to the one mid table
+		if (comp == 0) return mid;              
+		else if (comp < 0) return findIndex(key, low, mid-1);
+		else return findIndex(key, mid+1, high);
+	}
+	
+	/** searches the entire table */
+	private int findIndex(K key) { return findIndex(key, 0, table.size()-1); }
+	
+	@Override
+	public int size() { return table.size(); }
+
+	/** Returns the value v associated with key k if such an entry exists, otherwise returns null */
+	public V get(K key) { 
+		int j = findIndex(key);
+		if (j == size() || compare(key, table.get(j)) != 0) return null; // either findIndex didn't yield a result or it yielded the wrong result
+		return table.get(j).getValue(); 	
+		}
+
+	/** if M does not have an entry wit key equal to k, then adds entry (k,v) to M and returns null. Else
+    replaces the existing value of entry (k,v) with v and returns the old value */
+	public V put(K key, V value) {
+		int j = findIndex(key);
+		if (j < size() && compare(key, table.get(j))==0) 
+			return table.get(j).setValue(value);
+		table.add(j, new MapEntry<>(key, value));
+		return null;
+	}
+
+	/** Removes from M the entry with key equal to k and returns it's value. If M has no such entry returns null */
+	public V remove(K key) {
+		int j = findIndex(key);
+		if (j < size() && compare(key, table.get(j)) == 0) {
+			V old = table.get(j).getValue();
+			table.remove(j);
+			return old;
+		}	
+		return null;
+	}
+	
+	// private utility 
+	
+	private MapEntry<K,V> safeEntry(int j){
+		if (j < 0 || j>= table.size()) return null;
+		return table.get(j);
+	}
+
+
+	/** Returns the entry with the smallest key value, or null if the map is empty */
+	public Entry<K, V> firstEntry() { return safeEntry(0); }
+
+	/** Returns the entry with the largest key value or null if the map is empty */
+	public Entry<K, V> lastEntry() { return safeEntry(table.size()-1); }
+
+	/** Return the entry with the least key value bigger than or equal to the given key, null if no such entry exists */
+	public Entry<K, V> ceilingEntry(K key) { return safeEntry(findIndex(key)); }
+	
+	/**  Return the entry with the biggest key value smaller than or equal to the given key if any*/
+	public Entry<K, V> floorEntry(K key) {
+		int j = findIndex(key);
+		if (j==size() || !key.equals(table.get(j).getKey())) 
+			j--;
+		return safeEntry(j);
+	}
+
+	/** Return the entry with the greatest key value strictly smaller than the given key, null if no such entry exists */
+	public Entry<K, V> lowerEntry(K key) { return safeEntry(findIndex(key) -1); } // returns null if key is of entry at table.get(0)
+
+	/** Return the entry with the least key value strictly greater than the given key, null if no such entry exists */
+	public Entry<K, V> higherEntry(K key) { 
+		int j = findIndex(key);                               
+		if (j < size() && key.equals(table.get(j).getKey())) 
+			j++;
+		return safeEntry(j);
+		 }
+
+	// utility iterable
+	
+	private Iterable<Entry<K,V>> snapshot(int startIndex, K stop){
+		ArrayList<Entry<K,V>> buffer = new ArrayList<>();							// array list is an iterable
+		int j = startIndex;
+		while (j < table.size() && (stop == null || compare(stop, table.get(j)) > 0 )) 	// key of stop is bigger than the key of table.get(j)
+			buffer.add(table.get(j++));
+		return buffer;
+	}
+
+	/** Returns an iteration of all entries greater than or equal to k1, but strictly less than k2 */
+	public Iterable<Entry<K, V>> subMap(K k1, K k2) { return snapshot(findIndex(k1), k2); }
+
+    /** returns an iterable collection of the entire entry set */
+	public Iterable<Entry<K, V>> entrySet() { return snapshot(0, null);	}
+
+}
