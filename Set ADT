@@ -1,0 +1,15 @@
+Set ADT 
+
+add(e): Adds an element e to S (if not already present)
+
+remove(e): removes the element e from S (if present)
+
+contains(e): Returns whether e is an element of S
+
+iterator: Returns an iterator of all elements of S
+
+addAll(T): updates S to include all elements of set T (union)
+
+retainAll(T): Updates S so that it only keeps those elements that are also elements of set T (intersection)
+
+removeAll(T): Updates S by removing all elemts that also occur in T (subtraction)
