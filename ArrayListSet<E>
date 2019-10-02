@@ -1,0 +1,103 @@
+/**
+ * 
+ */
+package mapsHashSkip;
+
+import java.util.ArrayList;
+
+/**
+ * Set data structure based upon an ArrayList
+ * Java's standard is based upon a Hash Table
+ * @author Lau Sandt
+ * https://github.com/lausandt/HashTablesMapsSkipList
+ */
+public class ArrayListSet<E> implements Set<E> {
+	
+	ArrayList<E> set = new ArrayList<>();
+	
+	public ArrayListSet() {}
+	
+	public int size() { return set.size(); }
+
+	/** Adds an element e to S (if not already present) */
+	public void add(E element) throws IllegalArgumentException {
+	   if (set.contains(element)) throw new IllegalArgumentException("this element is already in the set");
+	   set.add(element);
+	}
+
+	/**  removes the element e from S (if present) */
+	public void remove(E element) throws IllegalArgumentException {
+		if (!set.contains(element)) throw new IllegalArgumentException("this element is not in the set");
+		set.remove(element);
+	}
+
+	/** Returns whether e is an element of S */
+	public boolean contains(E element) { return set.contains(element); }
+
+	public Iterable<E> elements()  {
+		ArrayList<E> buffer = new ArrayList<>();
+		for (int j = 0; j<set.size(); j++)
+			buffer.add(set.get(j));
+		return buffer;
+	}
+
+	/**  updates S to include all elements of set T (union) */
+	public void addAll(Set<E> other) {
+		for (E element: other.elements())
+			add(element);
+	}
+
+    /**  Updates S so that it only keeps those elements that are also elements of set T (intersection) */
+	public void retainAll(Set<E> other) {
+		ArrayList<E> temp = new ArrayList<>();
+		for (E element: other.elements())
+			if (contains(element))
+				temp.add(element);
+		set = temp;
+	}
+
+	/** Updates S by removing all elements that also occur in T (subtraction) */
+	public void removeAll(Set<E> T) {
+		for (E element : T.elements())
+			if (contains(element))
+				remove(element);
+	}
+	
+	public static void main(String[] args) {
+		
+		ArrayListSet<Integer> mySet = new ArrayListSet<>();
+		mySet.add(72);
+		System.out.println(mySet.contains(72));
+		mySet.add(1);
+		System.out.println(mySet.contains(1));
+		mySet.remove(72);
+		System.out.println(mySet.contains(72));
+		System.out.println(mySet.size());
+		
+		ArrayListSet<Integer> setTwo = new ArrayListSet<>();
+		setTwo.add(25);
+		setTwo.add(32);
+		setTwo.add(371);
+		System.out.println("Checking iterability of setTwo");
+		for (Integer i : setTwo.elements())
+			System.out.println(i);
+		
+		System.out.println("Checking union of sets");
+		mySet.addAll(setTwo);
+		for (Integer i : mySet.elements())
+			System.out.println(i);
+		
+		System.out.println("Checking intersection of sets");
+		mySet.retainAll(setTwo);
+		for (Integer i : mySet.elements())
+			System.out.println(i);
+		
+		System.out.println("Checking subtraction of sets");
+		mySet.removeAll(setTwo);
+		System.out.println(mySet.size());
+		
+		
+		
+	}
+
+}
