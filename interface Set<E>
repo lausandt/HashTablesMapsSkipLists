@@ -3,7 +3,7 @@
  */
 package mapsHashSkip;
 
-import java.util.Iterator;
+
 
 /**
  * Interface for a set data structure
@@ -12,18 +12,26 @@ import java.util.Iterator;
  */
 public interface Set<E> {
 	
-	void add(E element); // Adds an element e to S (if not already present) 
+	/** Adds an element e to S (if not already present), throws an exception if already present */
+	void add(E element); 
+	
+	/** removes the element e from S (throws an exception if not present) */
+	void remove(E element); 
 
-	void remove(E element); // removes the element e from S (if present)
+	/** Returns whether e is an element of S */
+	boolean contains(E element);  
 
-	boolean contains(E element); // Returns whether e is an element of S
+	/** Returns an iterator of all elements of S */
+	Iterable<E> elements(); 
 
-	Iterator<E> iterator(); // Returns an iterator of all elements of S
+	/** updates S to include all elements of set T (union) */
+	void addAll(Set<E> t);
 
-	Set<E> addAll(Set<E> t); // updates S to include all elements of set T (union)
+	/**  Updates S so that it only keeps those elements that are also elements of set T (intersection) */
+	void retainAll(Set<E> T); 
 
-	Set<E> retainAll(Set<E> T); // Updates S so that it only keeps those elements that are also elements of set T (intersection)
-
-	Set<E> removeAll(Set<E> T); // Updates S by removing all elements that also occur in T (subtraction)
+	/** Updates S by removing all elements that also occur in T (subtraction) */
+	void removeAll(Set<E> T); 
 
 }
+
