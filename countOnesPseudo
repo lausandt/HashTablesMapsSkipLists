@@ -1,4 +1,4 @@
-
+This algoritm runs O(n log n)
 Algorithm countOnes(A)
       input: a n x n matrix A, each row in the matrix is filled with 1's or and or 0's where all the 1's are before the 0's
       output: the total amount of ones in the Matrix
