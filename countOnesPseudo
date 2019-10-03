@@ -1,0 +1,31 @@
+
+Algorithm countOnes(A)
+      input: a n x n matrix A, each row in the matrix is filled with 1's or and or 0's where all the 1's are before the 0's
+      output: the total amount of ones in the Matrix
+
+      int acc <- 0;
+      int row <- 0;
+      return countOnes(A, row, acc)
+
+Algorithm countOnes(A, row, acc)
+  input: a n x n matrix A, int row number, accumulator acc 
+  output: the total amount of ones in the array 
+ 
+  int mid <- A.length/2 
+  if (row = A.length) return acc
+  if A[row][mid] = 1
+     acc <- acc + mid + 1
+     for j <- start + 1 to n-1 do
+         if A[row][j] = 1
+               acc <- acc + 1
+         else
+             break
+      countOnes(A,row+1,acc)
+   else
+      acc <- acc + mid
+      for j <- start -1 to 0 do  
+               if A[1][j] = 0
+		              acc <- acc -1
+               else 
+                 break
+      countOnes(A,row+1,acc)
